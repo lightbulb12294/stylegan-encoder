@@ -9,8 +9,10 @@ import dnnlib.tflib as tflib
 import config
 from encoder.generator_model import Generator
 from encoder.perceptual_model import PerceptualModel
-
-URL_FFHQ = 'https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ'  # karras2019stylegan-ffhq-1024x1024.pkl
+# URL_FFHQ = 'https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ'  # karras2019stylegan-ffhq-1024x1024.pkl
+# URL_FFHQ = 'https://drive.google.com/a/gapp.nthu.edu.tw/uc?id=19HlErmIBVrsZ8Tk4BsMpEEGNnzlsKCya&export=download' # backup download link
+import pretrained_networks # stylegan2
+URL_FFHQ = 'gdrive:networks/stylegan2-ffhq-config-f.pkl' # stylegan2
 
 
 def split_to_batches(l, n):
@@ -47,8 +49,9 @@ def main():
 
     # Initialize generator and perceptual model
     tflib.init_tf()
-    with dnnlib.util.open_url(URL_FFHQ, cache_dir=config.cache_dir) as f:
-        generator_network, discriminator_network, Gs_network = pickle.load(f)
+#     with dnnlib.util.open_url(URL_FFHQ, cache_dir=config.cache_dir) as f:
+#         generator_network, discriminator_network, Gs_network = pickle.load(f)
+    generator_network, discriminator_network, Gs_network = pretrained_networks.load_networks(URL_FFHQ) # stylegan2
 
     generator = Generator(Gs_network, args.batch_size, randomize_noise=args.randomize_noise)
     perceptual_model = PerceptualModel(args.image_size, layer=9, batch_size=args.batch_size)
